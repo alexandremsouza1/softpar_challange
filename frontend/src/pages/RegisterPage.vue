@@ -1,12 +1,19 @@
 <template>
     <q-page padding>
-        <div class="login-container">
-            <q-card class="login-card">
+        <div class="signup-container">
+            <q-card class="signup-card">
                 <q-card-section>
-                    <div class="text-h6">Login</div>
+                    <div class="text-h6">Registro</div>
                 </q-card-section>
 
                 <q-card-section>
+                    <q-input
+                        v-model="name"
+                        label="Nome"
+                        outlined
+                        dense
+                        :rules="[rules.required]"
+                    />
                     <q-input
                         v-model="email"
                         label="Email"
@@ -17,7 +24,7 @@
                     />
                     <q-input
                         v-model="password"
-                        label="Password"
+                        label="Senha"
                         type="password"
                         outlined
                         dense
@@ -27,15 +34,9 @@
 
                 <q-card-actions>
                     <q-btn
-                        label="Entrar"
+                        label="Registrar"
                         color="primary"
-                        @click="handleSignIn"
-                    />
-                    <!-- Botão para ir para a página de cadastro -->
-                    <q-btn
-                        label="Ir para Cadastro"
-                        color="secondary"
-                        @click="goToRegister"
+                        @click="handleSignUp"
                     />
                 </q-card-actions>
             </q-card>
@@ -48,50 +49,47 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import AuthenticationService from "../services/AuthenticationService";
 
+const name = ref("");
 const email = ref("");
 const password = ref("");
 
 const router = useRouter();
 
 const rules = {
-    required: (val: string) => !!val || "Field is required",
+    required: (val: string) => !!val || "O campo é obrigatório",
     email: (val: string) =>
-        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) || "Invalid email",
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) || "E-mail inválido",
 };
 
-const handleSignIn = async () => {
+const handleSignUp = async () => {
     try {
-        if (!email.value || !password.value) {
+        if (!name.value || !email.value || !password.value) {
             alert("Por favor preencha todos os campos.");
             return;
         }
 
-        const response = await AuthenticationService.signin(email.value, password.value);
+        const response = await AuthenticationService.signup(name.value, email.value, password.value);
         const token = response.data.access_token;
 
         localStorage.setItem("access_token", token);
 
         router.push("/");
     } catch (error) {
-        console.error("Sign-in failed:", error);
-        alert("Falha no login. Por favor, tente novamente.");
+        console.error("Sign-up failed:", error);
+        alert("Falha na inscrição. Por favor, tente novamente.");
     }
-};
-
-const goToRegister = () => {
-    router.push("/register");
 };
 </script>
 
 <style scoped>
-.login-container {
+.signup-container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100%;
 }
 
-.login-card {
+.signup-card {
     width: 400px;
 }
 </style>
