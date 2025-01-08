@@ -46,7 +46,7 @@
               <q-card class="bg-secondary text-white">
                 <q-card-section>
                   <div class="text-h6">Tarefas Concluídas</div>
-                  <div class="text-h3">{{ completedTasksCount }} / {{ tasks.length }}</div>
+                  <div class="text-h3">{{ completedTasksCount }} / {{ achievements.length }}</div>
                 </q-card-section>
               </q-card>
             </div>
@@ -54,18 +54,25 @@
         </q-card-section>
   
         <q-card-section>
-          <div class="text-h5 q-mb-md">Tarefas</div>
+          <div class="text-h5 q-mb-md">Legenda - Conquistas</div>
           <q-list bordered separator>
-            <q-item v-for="task in tasks" :key="task.id">
+            <q-item v-for="achievement in achievements" :key="achievement.id">
               <q-item-section avatar>
-                <q-checkbox v-model="task.completed" @update:model-value="updateScore(task)" />
+                <q-icon 
+                  :name="checkCompleted(achievement) ? 'check_circle' : 'cancel'"
+                  :color="checkCompleted(achievement) ? 'primary' : 'secondary'"
+                  :size="'md'"
+                  :onClick="() => updateScore(achievement.id)"
+                  class="cursor-pointer"
+                />
               </q-item-section>
               <q-item-section>
-                <q-item-label :class="{ 'text-strike': task.completed }">{{ task.title }}</q-item-label>
+                <q-item-label >{{ achievement.name }}</q-item-label>
+                <q-item-label caption>{{ achievement.description }}</q-item-label>
               </q-item-section>
               <q-item-section side>
                 <q-chip color="primary" text-color="white">
-                  {{ task.points }} pontos
+                  {{ achievement.points }} pontos
                 </q-chip>
               </q-item-section>
             </q-item>
@@ -76,38 +83,79 @@
   </template>
   
   <script setup>
-  import { ref, computed } from 'vue'
-  
-  const user = ref({
-    name: 'João Silva',
-    email: 'joao.silva@example.com'
+  import { ref, computed, onMounted } from 'vue'
+  import UserService from "../services/UserService";
+
+  onMounted(() => {
+    fetchUser()
+    fetchAchievements()
+    fetchUserAchievement()
   })
+
+  const user = ref({})
   
-  const tasks = ref([
-    { id: 1, title: 'Completar perfil', points: 10, completed: false },
-    { id: 2, title: 'Verificar e-mail', points: 5, completed: false },
-    { id: 3, title: 'Configurar preferências', points: 15, completed: false },
-    { id: 4, title: 'Concluir primeira tarefa', points: 20, completed: false },
-    { id: 5, title: 'Convidar um amigo', points: 25, completed: false }
+  const achievements = ref([
+    // { id: 1, title: 'Completar perfil', points: 10, completed: false },
+    // { id: 2, title: 'Verificar e-mail', points: 5, completed: false },
+    // { id: 3, title: 'Configurar preferências', points: 15, completed: false },
+    // { id: 4, title: 'Concluir primeira tarefa', points: 20, completed: false },
+    // { id: 5, title: 'Convidar um amigo', points: 25, completed: false }
   ])
+
+  const tasks = ref({})
   
+
+  const fetchUser = async () => {
+    const response = await UserService.get()
+    if (response)
+      user.value = response
+  }
+
+  const fetchAchievements = async () => {
+    const response = await UserService.getAchievements()
+    if (response)
+      achievements.value = response
+  }
+
+  const fetchUserAchievement = async () => {
+    const response = await UserService.getUserAchievement()
+    if (response)
+      tasks.value = response
+  }
+
   const totalScore = computed(() => {
-    return tasks.value.reduce((total, task) => {
-      return total + (task.completed ? task.points : 0)
+    if (!tasks.value.completed_achievements) return 0
+    return tasks.value.completed_achievements.reduce((total, achievement) => {
+      return total + achievement.points
     }, 0)
   })
   
   const completedTasksCount = computed(() => {
-    return tasks.value.filter(task => task.completed).length
+    if (!tasks.value.completed_achievements) return 0
+    return tasks.value.completed_achievements.length
   })
-  
+    
   const progressPercentage = computed(() => {
-    const totalPoints = tasks.value.reduce((total, task) => total + task.points, 0)
-    return totalScore.value / totalPoints
+    if (!achievements.value || achievements.value.length === 0) return 0
+
+    const totalPossiblePoints = achievements.value.reduce((total, achievement) => {
+      return total + achievement.points
+    }, 0)
+
+    if (totalPossiblePoints === 0) return 0
+
+    return totalScore.value / totalPossiblePoints
   })
   
   const updateScore = (task) => {
     console.log(`Tarefa "${task.title}" ${task.completed ? 'concluída' : 'não concluída'}`)
+  }
+
+  const checkCompleted = (task) => {
+    if (!tasks.value.completed_achievements || !Array.isArray(tasks.value.completed_achievements)) {
+      return false
+    }
+    return tasks.value.completed_achievements.some(achievement => achievement.id === task.id)
   }
   </script>
   

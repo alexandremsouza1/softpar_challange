@@ -9,7 +9,7 @@
           <q-spinner color="primary" size="3em" />
         </q-card-section>
   
-        <q-card-section v-else-if="overdueTasks.length === 0">
+        <q-card-section v-else-if="tasks.length === 0">
           <q-banner class="bg-positive text-white">
             Parabéns! Você não tem tarefas em atraso.
           </q-banner>
@@ -17,18 +17,18 @@
   
         <q-card-section v-else>
           <q-list bordered separator>
-            <q-item v-for="task in overdueTasks" :key="task.id" clickable v-ripple>
+            <q-item v-for="task in tasks" :key="task.id" clickable v-ripple>
               <q-item-section avatar>
                 <q-icon name="warning" color="negative" />
               </q-item-section>
               <q-item-section>
                 <q-item-label>{{ task.title }}</q-item-label>
                 <q-item-label caption>
-                  Vencimento: {{ formatDate(task.dueDate) }}
+                  Vencimento: {{ formatDate(task.deadline) }}
                 </q-item-label>
               </q-item-section>
               <q-item-section side>
-                <q-btn flat round color="primary" icon="done" @click="markAsCompleted(task.id)" />
+                <q-btn flat round color="primary" icon="done" @click="markAsCompleted(task)" />
               </q-item-section>
             </q-item>
           </q-list>
@@ -41,28 +41,27 @@
   import { ref, computed, onMounted } from 'vue'
   import { date } from 'quasar'
   import { useQuasar } from 'quasar'
+
+  import TaskService from "../services/TaskService";
   
   const $q = useQuasar()
   
   const tasks = ref([])
   const loading = ref(true)
   
-  const overdueTasks = computed(() => {
-    const now = new Date()
-    return tasks.value.filter(task => !task.completed && new Date(task.dueDate) < now)
-  })
-  
+
   const fetchTasks = async () => {
     loading.value = true
     try {
       // Simulating API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      tasks.value = [
-        { id: 1, title: 'Relatório mensal', dueDate: '2023-05-01', completed: false },
-        { id: 2, title: 'Reunião com cliente', dueDate: '2023-05-03', completed: false },
-        { id: 3, title: 'Atualizar documentação', dueDate: '2023-05-05', completed: false },
-        { id: 4, title: 'Revisar código', dueDate: '2023-05-10', completed: false },
-      ]
+      const response = await TaskService.delayed()
+      tasks.value = response
+      // [
+      //   { id: 1, title: 'Relatório mensal', dueDate: '2023-05-01', completed: false },
+      //   { id: 2, title: 'Reunião com cliente', dueDate: '2023-05-03', completed: false },
+      //   { id: 3, title: 'Atualizar documentação', dueDate: '2023-05-05', completed: false },
+      //   { id: 4, title: 'Revisar código', dueDate: '2023-05-10', completed: false },
+      // ]
     } catch (error) {
       console.error('Erro ao buscar tarefas:', error)
       $q.notify({
@@ -78,18 +77,15 @@
     return date.formatDate(dateString, 'DD/MM/YYYY')
   }
   
-  const markAsCompleted = async (taskId) => {
+  const markAsCompleted = async (task) => {
     try {
-      // Simulating API call
-      await new Promise(resolve => setTimeout(resolve, 500))
-      const taskIndex = tasks.value.findIndex(task => task.id === taskId)
-      if (taskIndex !== -1) {
-        tasks.value[taskIndex].completed = true
-        $q.notify({
-          color: 'positive',
-          message: 'Tarefa marcada como concluída'
-        })
-      }
+      task.is_completed = true
+      await TaskService.update(task)
+      fetchTasks()
+      $q.notify({
+        color: 'positive',
+        message: 'Tarefa atualizada com sucesso'
+      })
     } catch (error) {
       console.error('Erro ao marcar tarefa como concluída:', error)
       $q.notify({

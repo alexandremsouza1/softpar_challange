@@ -71,4 +71,10 @@ class TaskController extends Controller
     {
         //
     }
+
+    public function delayed()
+    {
+        $tasks = $this->taskService->getDelayedTasks();
+        return response()->json($tasks);
+    }
 }

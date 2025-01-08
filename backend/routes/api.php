@@ -27,6 +27,7 @@ Route::middleware('auth:sanctum')->prefix('category')->group(function () {
 // Rotas para Task
 Route::middleware('auth:sanctum')->prefix('task')->group(function () {
     Route::get('/', [TaskController::class, 'index']);
+    Route::get('/delayed', [TaskController::class, 'delayed']);
     Route::post('/', [TaskController::class, 'store']);
     Route::get('/{task}', [TaskController::class, 'show']);
     Route::put('/{task}', [TaskController::class, 'update']);
@@ -43,13 +44,13 @@ Route::middleware('auth:sanctum')->prefix('subtask')->group(function () {
 });
 
 // Rotas para TaskAssignee
-Route::middleware('auth:sanctum')->prefix('task-assignee')->group(function () {
-    Route::get('/', [TaskAssigneeController::class, 'index']);
-    Route::post('/', [TaskAssigneeController::class, 'store']);
-    Route::get('/{taskAssignee}', [TaskAssigneeController::class, 'show']);
-    Route::put('/{taskAssignee}', [TaskAssigneeController::class, 'update']);
-    Route::delete('/{taskAssignee}', [TaskAssigneeController::class, 'destroy']);
-});
+// Route::middleware('auth:sanctum')->prefix('task-assignee')->group(function () {
+//     Route::get('/', [TaskAssigneeController::class, 'index']);
+//     Route::post('/', [TaskAssigneeController::class, 'store']);
+//     Route::get('/{taskAssignee}', [TaskAssigneeController::class, 'show']);
+//     Route::put('/{taskAssignee}', [TaskAssigneeController::class, 'update']);
+//     Route::delete('/{taskAssignee}', [TaskAssigneeController::class, 'destroy']);
+// });
 
 // Rotas para Achievement
 Route::middleware('auth:sanctum')->prefix('achievement')->group(function () {

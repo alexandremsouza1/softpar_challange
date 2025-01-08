@@ -59,4 +59,12 @@ class TaskService {
         return $task;
     }
 
+    public function getDelayedTasks()
+    {
+        return $this->task
+            ->where('deadline', '<', now())
+            ->where('is_completed', false)
+            ->get();
+    }
+
 }

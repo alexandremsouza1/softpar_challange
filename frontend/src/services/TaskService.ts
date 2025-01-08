@@ -18,7 +18,11 @@ class TaskService {
 
     static async update(taskData) {
         const response = await api.put(`/task/${taskData.id}`, taskData);
-        console.log(response);
+        return response.data;
+    }
+
+    static async delayed() {
+        const response = await api.get("/task/delayed");
         return response.data;
     }
 }
