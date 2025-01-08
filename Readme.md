@@ -1,11 +1,45 @@
-1. Priorização de Tarefas com Algoritmo de Gestão de Tempo
+## TODO List Application
 
-    Funcionalidade: Adicione um recurso que sugira automaticamente quais tarefas o usuário deve priorizar com base na data de entrega (deadline), complexidade (estimada pelo usuário) e impacto.
-    Tecnologia: Use um algoritmo simples, como a Matriz de Eisenhower (Urgente x Importante), ou implemente um sistema de Machine Learning para aprender os padrões de priorização do usuário.
+### Desafio
+* **Objetivo:** Desenvolver uma aplicação TODO list funcional em 48 horas.
+* **Recursos Extras:** Implementar funcionalidades adicionais para demonstrar habilidades técnicas.
 
-2. Gamificação
+### Tecnologias Utilizadas
+* **Backend:** Laravel 8, PostgreSQL 15, Redis
+* **Frontend:** Vue 3 com Quasar
+* **Ferramentas:** Docker, Docker Compose, pgAdmin 4
 
-    Funcionalidade: Transforme o gerenciamento de tarefas em um jogo! Conceda recompensas ou níveis conforme o usuário conclui tarefas ou subtarefas.
-        Por exemplo: "Conclua 5 tarefas para ganhar uma medalha de produtividade."
-    Tecnologia: Use um sistema de badges e pontos no frontend (Vue ou React) e armazene os dados no backend.
-    Valor Adicionado: Aumenta o engajamento e incentiva o usuário a usar a ferramenta diariamente.
+
+### Funcionalidades Principais
+
+* Criação e Edição de Tarefas: Crie tarefas com detalhes como título, descrição, data de vencimento e prioridade.
+*    Subtarefas: Divida tarefas complexas em subtarefas menores para melhor organização.
+*    Alertas: Receba notificações antes das datas de vencimento para garantir que nada seja esquecido.
+*    Priorização Inteligente: Possibilidade de marcar tarefas como urgente e importante.
+*    Gamificação: Acumule pontos ao realizar as tarefas conforme os desafios.
+
+### Arquitetura do Sistema
+#### Diagrama de Arquitetura 
+![Diagrama de Arquitetura](images/mer.png)
+
+### Configuração do Projeto
+* **Clonagem:** `clonar o repositorio`
+* **Configuração:**
+    * Editar o arquivo `.env.example` para `.env`
+* **Início:** `docker-compose up --build`
+* **Instalar Dependências do Backend (Laravel):**
+
+Para instalar as dependências do Laravel, use a imagem oficial do Composer diretamente. Execute o seguinte comando para rodar o composer install no container do backend:
+
+docker-compose run --rm backend composer install
+
+Isso irá utilizar a imagem do Composer para instalar as dependências do backend corretamente.
+
+* **Instalar Dependências do Frontend (Vue 3 com Quasar):**
+
+Se você não tem o Node.js/NPM instalado, execute o comando abaixo dentro do container do frontend para instalar as dependências do Vue com Quasar:
+
+docker-compose exec frontend npm install
+* **Acesso:**
+    * Frontend: http://localhost:9000
+    * Backend: http://localhost:8080

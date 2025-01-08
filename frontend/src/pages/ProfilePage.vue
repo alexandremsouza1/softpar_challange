@@ -45,7 +45,7 @@
             <div class="col-12 col-sm-6">
               <q-card class="bg-secondary text-white">
                 <q-card-section>
-                  <div class="text-h6">Tarefas Concluídas</div>
+                  <div class="text-h6">Missões Concluídas</div>
                   <div class="text-h3">{{ completedTasksCount }} / {{ achievements.length }}</div>
                 </q-card-section>
               </q-card>

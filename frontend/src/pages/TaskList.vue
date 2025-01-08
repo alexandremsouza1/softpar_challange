@@ -194,6 +194,25 @@ const updateTask = async (task) => {
   }
 }
 
+const deleteTask = async (taskId) => {
+  try {
+    await TaskService.delete(taskId)
+    tasks.value = tasks.value.filter(task => task.id !== taskId)
+    $q.notify({
+      color: 'positive',
+      message: 'Task deleted successfully',
+      icon: 'check'
+    })
+  } catch (error) {
+    console.error('Error deleting task:', error)
+    $q.notify({
+      color: 'negative',
+      message: 'Failed to delete task. Please try again.',
+      icon: 'error'
+    })
+  }
+}
+
 const resetForm = () => {
   newTask.title = ''
   newTask.description = ''

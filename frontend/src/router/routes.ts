@@ -49,19 +49,6 @@ const routes: RouteRecordRaw[] = [
         }
     },
     {
-        path: "/task-create",
-        component: () => import("layouts/MainLayout.vue"),
-        children: [{ path: "", component: () => import("pages/TaskCreate.vue") }],
-        beforeEnter: (to, from, next) => {
-            const store = useStore();
-            if (!store.getters["auth/isAuthenticated"]) {
-                next("/login");
-            } else {
-                next();
-            }
-        }
-    },
-    {
         path: "/:catchAll(.*)*",
         component: () => import("pages/ErrorNotFound.vue"),
     },

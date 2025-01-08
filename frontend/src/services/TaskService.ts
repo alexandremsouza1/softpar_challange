@@ -21,6 +21,11 @@ class TaskService {
         return response.data;
     }
 
+    static async delete(id: number) {
+        const response = await api.delete(`/task/${id}`);
+        return response.data;
+    }
+
     static async delayed() {
         const response = await api.get("/task/delayed");
         return response.data;
