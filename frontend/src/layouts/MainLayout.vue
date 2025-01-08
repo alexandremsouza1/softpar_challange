@@ -25,6 +25,7 @@
       show-if-above
       bordered
       class="bg-grey-1"
+      v-if="isAuthenticated"
     >
       <q-list>
         <q-item-label header>Menu</q-item-label>
@@ -54,26 +55,40 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { la500px } from '@quasar/extras/line-awesome';
+import { ref,computed } from 'vue'
+import { useStore } from "vuex";
 
+const store = useStore();
+const isAuthenticated = computed(() => store.getters["isAuthenticated"]);
 const appVersion = import.meta.env.VITE_APP_VERSION || 'Unknown'
 const leftDrawerOpen = ref(false)
 
 const menuItems = [
   {
+    label: 'Perfil',
+    icon: 'account_circle',
+    route: '/profile'
+  },
+  {
     label: 'Tarefas',
-    icon: 'task',
-    route: '/'
+    icon: 'list',
+    route: '/tasks'
   },
   {
-    label: 'Relatório',
-    icon: 'assessment',
-    route: '/relatorio'
+    label: 'Categorias',
+    icon: 'category',
+    route: '/categories'
   },
   {
-    label: 'Pontuação',
-    icon: 'stars',
-    route: '/pontuacao'
+    label: 'Alertas',
+    icon: 'notifications',
+    route: '/alerts'
+  },
+  {
+    label: 'Logout',
+    icon: 'logout',
+    route: '/logout'
   }
 ]
 

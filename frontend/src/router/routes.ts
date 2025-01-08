@@ -1,4 +1,5 @@
 import { RouteRecordRaw } from "vue-router";
+import { useStore } from "vuex";
 
 const routes: RouteRecordRaw[] = [
     {
@@ -7,27 +8,41 @@ const routes: RouteRecordRaw[] = [
         children: [{ path: "", component: () => import("pages/LoginPage.vue") }],
     },
     {
+        path: "/logout",
+        component: () => import("layouts/MainLayout.vue"),
+        children: [{ path: "", component: () => import("pages/LogoutPage.vue") }],
+    },
+    {
         path: "/register",
         component: () => import("layouts/MainLayout.vue"),
         children: [{ path: "", component: () => import("pages/RegisterPage.vue") }],
     },
     {
         path: "/",
+        redirect: "/tasks",
         component: () => import("layouts/MainLayout.vue"),
         children: [
             {
-                path: "",
+                path: "/profile",
+                component: () => import("pages/ProfilePage.vue"),
+            },
+            {
+                path: "/tasks",
                 component: () => import("pages/TaskList.vue")
             },
             {
-                path: ":taskId",
-                component: () => import("pages/TaskDetails.vue"),
-                props: true,
+                path: "/categories",
+                component: () => import("pages/CategoryList.vue")
             },
+            {
+                path: "/alerts",
+                component: () => import("pages/AlertList.vue")
+            }
         ],
         beforeEnter: (to, from, next) => {
-            if (!localStorage.getItem('access_token')) {
-                next('/login');
+            const store = useStore();
+            if (!store.getters["isAuthenticated"]) {
+                next("/login");
             } else {
                 next();
             }
@@ -38,8 +53,9 @@ const routes: RouteRecordRaw[] = [
         component: () => import("layouts/MainLayout.vue"),
         children: [{ path: "", component: () => import("pages/TaskCreate.vue") }],
         beforeEnter: (to, from, next) => {
-            if (!localStorage.getItem('access_token')) {
-                next('/login');
+            const store = useStore();
+            if (!store.getters["auth/isAuthenticated"]) {
+                next("/login");
             } else {
                 next();
             }

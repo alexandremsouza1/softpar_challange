@@ -25,17 +25,11 @@
                     />
                 </q-card-section>
 
-                <q-card-actions>
+                <q-card-actions class="qa-gutter-sm justify-center">
                     <q-btn
                         label="Entrar"
                         color="primary"
                         @click="handleSignIn"
-                    />
-                    <!-- Botão para ir para a página de cadastro -->
-                    <q-btn
-                        label="Ir para Cadastro"
-                        color="secondary"
-                        @click="goToRegister"
                     />
                 </q-card-actions>
             </q-card>
@@ -46,12 +40,14 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 import AuthenticationService from "../services/AuthenticationService";
 
 const email = ref("");
 const password = ref("");
 
 const router = useRouter();
+const store  = useStore();
 
 const rules = {
     required: (val: string) => !!val || "Field is required",
@@ -60,22 +56,18 @@ const rules = {
 };
 
 const handleSignIn = async () => {
-    try {
-        if (!email.value || !password.value) {
-            alert("Por favor preencha todos os campos.");
-            return;
-        }
+    if (!email.value || !password.value) {
+        alert("Por favor preencha todos os campos.");
+        return;
+    }
 
-        const response = await AuthenticationService.signin(email.value, password.value);
-        const token = response.data.access_token;
-
-        localStorage.setItem("access_token", token);
-
+    AuthenticationService.signin(email.value, password.value).then((token) => {
+        store.dispatch("updateAccessToken", token);
         router.push("/");
-    } catch (error) {
+    }).catch((error) => {
         console.error("Sign-in failed:", error);
         alert("Falha no login. Por favor, tente novamente.");
-    }
+    });
 };
 
 const goToRegister = () => {
