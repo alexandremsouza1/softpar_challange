@@ -87,6 +87,7 @@ export default defineConfig((/* ctx */) => {
                   secondary: '#ff9800',
                   accent: '#9c27b0',
                 },
+                notify: { /* look at QuasarConfOptions from the API card */ }
               },
 
             // iconSet: "material-icons", // Quasar icon set
@@ -100,7 +101,9 @@ export default defineConfig((/* ctx */) => {
             // directives: [],
 
             // Quasar plugins
-            plugins: []
+            plugins: [
+                "Notify"
+            ]
         },
 
         // animations: "all", // --- includes all animations

@@ -69,6 +69,8 @@
   import { useQuasar } from 'quasar'
   
   const $q = useQuasar()
+
+  import CategoryService from "../services/CategoryService";
   
   const categories = ref([])
   const loading = ref(false)
@@ -92,13 +94,13 @@
   const fetchCategories = async () => {
     loading.value = true
     try {
-      // Simulating API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      categories.value = [
-        { id: 1, name: 'Trabalho', color: '#FF0000' },
-        { id: 2, name: 'Pessoal', color: '#00FF00' },
-        { id: 3, name: 'Estudo', color: '#0000FF' }
-      ]
+      const response = await CategoryService.getAll()
+      categories.value = response
+      // categories.value = [
+      //   { id: 1, name: 'Trabalho', color: '#FF0000' },
+      //   { id: 2, name: 'Pessoal', color: '#00FF00' },
+      //   { id: 3, name: 'Estudo', color: '#0000FF' }
+      // ]
     } catch (error) {
       console.error('Erro ao buscar categorias:', error)
       $q.notify({
@@ -132,22 +134,12 @@
     }
   
     try {
-      // Simulating API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
       if (editingCategory.value) {
-        const index = categories.value.findIndex(c => c.id === editingCategory.value.id)
-        if (index !== -1) {
-          categories.value[index] = { ...editingCategory.value, ...categoryForm }
-        }
+        await CategoryService.update(categoryForm)
       } else {
-        const newCategory = {
-          id: categories.value.length + 1,
-          ...categoryForm
-        }
-        categories.value.push(newCategory)
+        await CategoryService.create(categoryForm)
       }
-  
+      fetchCategories()
       dialogVisible.value = false
       $q.notify({
         color: 'positive',
@@ -164,8 +156,7 @@
   
   const deleteCategory = async (id) => {
     try {
-      // Simulating API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      await CategoryService.delete(id)
       categories.value = categories.value.filter(c => c.id !== id)
       $q.notify({
         color: 'positive',

@@ -25,7 +25,8 @@ const logout = async () => {
   isLoggingOut.value = true;
   try {
     await AuthenticationService.signout();
-    await store.dispatch('logout'); 
+    await store.dispatch('logout');
+    localStorage.removeItem('softpar');
     router.replace('/login');
   } catch (error) {
     console.error('Erro ao deslogar:', error);
