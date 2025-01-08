@@ -63,6 +63,9 @@ cp .env.example .env
 docker-compose up -d
 ```
 
+#### 3.1. Configuração
+- Talvez seja necessario rodar o composer antes de subir o container pois o dockerfile está dentro da pasta /vendor.
+
 ### 4. Instalação de Dependências
 
 #### Backend (Laravel)
