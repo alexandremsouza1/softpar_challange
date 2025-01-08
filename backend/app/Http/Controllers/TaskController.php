@@ -2,16 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\TaskService;
+use Illuminate\Container\Attributes\Auth;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
+    //constructor
+    public function __construct(public TaskService $taskService)
+    {
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $tasks = $this->taskService->getTasks();
+        return response()->json($tasks);
     }
 
     /**
@@ -27,7 +34,9 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user = auth()->user();
+        $task = $this->taskService->createTask($request->all(), $user);
+        return response()->json($task);
     }
 
     /**
@@ -51,7 +60,8 @@ class TaskController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $task = $this->taskService->updateTask($request->all(), $id);
+        return response()->json($task);
     }
 
     /**
